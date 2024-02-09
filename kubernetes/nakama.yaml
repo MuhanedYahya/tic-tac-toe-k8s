@@ -1,0 +1,83 @@
+# nakama-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: template-nk-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: template-nk-backend
+  template:
+    metadata:
+      labels:
+        app: template-nk-backend
+    spec:
+      containers:
+        - name: nakama
+          image: muhanedfrostlinegames/nakama-project-template:v1
+          command:
+            - "/bin/sh"
+            - "-ecx"
+            - "/nakama/nakama migrate up --database.address postgres:localdb@postgres:5432/nakama?sslmode=disable && exec /nakama/nakama --config /nakama/data/local.yml --database.address postgres:localdb@postgres:5432/nakama?sslmode=disable"
+          ports:
+            - containerPort: 7349
+            - containerPort: 7350
+            - containerPort: 7351
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: 7350
+          #   initialDelaySeconds: 10
+          #   periodSeconds: 5
+          #   timeoutSeconds: 2
+          #   failureThreshold: 3
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: 7350
+          #   initialDelaySeconds: 60
+          #   periodSeconds: 30
+          #   timeoutSeconds: 5
+          #   failureThreshold: 5
+          env:
+            - name: DB_HOST
+              value: postgres
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: nakama
+            - name: DB_USER
+              value: localdb
+            - name: DB_PASSWORD
+              value: localdb
+      #     volumeMounts:
+      #       - name: nakama-data
+      #         mountPath: /nakama/data
+              
+      # volumes:
+      #   - name: nakama-data
+      #     hostPath:
+      #       path: /mnt/nakama
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nakama-service
+spec:
+  selector:
+    app: template-nk-backend
+  ports:
+    - name: port-7349
+      protocol: TCP
+      port: 7349
+      targetPort: 7349
+    - name: port-7350
+      protocol: TCP
+      port: 7350
+      targetPort: 7350
+    - name: port-7351
+      protocol: TCP
+      port: 7351
+      targetPort: 7351

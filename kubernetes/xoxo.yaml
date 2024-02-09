@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xoxo-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xoxo
+  template:
+    metadata:
+      labels:
+        app: xoxo
+    spec:
+      containers:
+      - name: xoxo
+        image: muhanedfrostlinegames/xoxo:dev
+        ports:
+        - containerPort: 5000
+        command: ["npm", "run", "dev"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: xoxo-service
+spec:
+  selector:
+    app: xoxo
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      name: 8501-port
+      port: 5000
+      targetPort: 5000

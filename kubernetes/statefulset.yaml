@@ -1,0 +1,63 @@
+apiVersion: apps/v1  
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  serviceName: "postgres"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:12.2
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+          subPath: pgdata
+        env:
+        - name: POSTGRES_USER
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          value: localdb
+        - name: POSTGRES_DB
+          value: nakama
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        ports:
+        - containerPort: 5432
+      terminationGracePeriodSeconds: 60
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-data
+    spec:
+      accessModes:
+      - "ReadWriteOnce"
+      resources:
+        requests:
+          storage: 10Gi
+
+---
+---
+# postgres-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      name: 5432-port
+      port: 5432
+      targetPort: 5432
+    - protocol: TCP
+      name: 8080-port
+      port: 8080
+      targetPort: 8080

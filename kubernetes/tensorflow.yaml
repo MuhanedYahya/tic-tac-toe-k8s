@@ -1,0 +1,53 @@
+# tensorflow-serving-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: template-tf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: template-tf
+  template:
+    metadata:
+      labels:
+        app: template-tf
+    spec:
+      containers:
+        - name: tensorflow-serving
+          image: tensorflow/serving
+          ports:
+            - containerPort: 8501
+          env:
+            - name: MODEL_NAME
+              value: ttt
+          # readinessProbe:
+          #   httpGet:
+          #     path: http://localhost
+          #     port: 8501
+          #   initialDelaySeconds: 10
+          #   periodSeconds: 5
+          #   timeoutSeconds: 2
+          #   failureThreshold: 3
+          volumeMounts:
+            - name: model-volume
+              mountPath: /models/ttt
+      volumes:
+        - name: model-volume
+          hostPath:
+            path: /mnt/models
+
+---
+# tensorflow-serving-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: template-tf
+spec:
+  selector:
+    app: template-tf
+  ports:
+    - protocol: TCP
+      name: 8501-port
+      port: 8501
+      targetPort: 8501
