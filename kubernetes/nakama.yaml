@@ -2,16 +2,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: template-nk-backend
+  name: nakama
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: template-nk-backend
+      app: nakama
   template:
     metadata:
       labels:
-        app: template-nk-backend
+        app: nakama
     spec:
       containers:
         - name: nakama
@@ -64,10 +64,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nakama-service
+  name: nakama
 spec:
   selector:
-    app: template-nk-backend
+    app: nakama
+  type: LoadBalancer
   ports:
     - name: port-7349
       protocol: TCP

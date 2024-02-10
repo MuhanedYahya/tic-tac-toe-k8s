@@ -10,8 +10,9 @@ class Nakama {
     }
 
     async authenticate() {
-        const nakamaServiceHost = "nakama-service";
-        this.client = new Client("defaultkey", nakamaServiceHost, "7350");
+        const endpoint = process.env.NAKAMA_ENDPOINT || "localhost"; // Default to localhost if environment variable not set
+        const port = process.env.NAKAMA_PORT || "7350"; // Default port if environment variable not set
+        this.client = new Client("defaultkey", endpoint, port);
         // this.client = new Client("defaultkey", "localhost", "7350");
         this.client.ssl = false;
 

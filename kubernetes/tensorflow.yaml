@@ -2,20 +2,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: template-tf
+  name: tensorflow
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: template-tf
+      app: tensorflow
   template:
     metadata:
       labels:
-        app: template-tf
+        app: tensorflow
     spec:
       containers:
-        - name: tensorflow-serving
-          image: tensorflow/serving
+        - name: tensorflow
+          image: muhanedfrostlinegames/xoxo-tensorflow:v1
           ports:
             - containerPort: 8501
           env:
@@ -29,23 +29,23 @@ spec:
           #   periodSeconds: 5
           #   timeoutSeconds: 2
           #   failureThreshold: 3
-          volumeMounts:
-            - name: model-volume
-              mountPath: /models/ttt
-      volumes:
-        - name: model-volume
-          hostPath:
-            path: /mnt/models
+      #     volumeMounts:
+      #       - name: model-volume
+      #         mountPath: /models/ttt
+      # volumes:
+      #   - name: model-volume
+      #     hostPath:
+      #       path: /mnt/models
 
 ---
 # tensorflow-serving-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: template-tf
+  name: tf
 spec:
   selector:
-    app: template-tf
+    app: tensorflow
   ports:
     - protocol: TCP
       name: 8501-port

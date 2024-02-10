@@ -14,7 +14,12 @@ spec:
     spec:
       containers:
       - name: xoxo
-        image: muhanedfrostlinegames/xoxo:dev
+        image: muhanedfrostlinegames/xoxo:v1
+        env:
+          - name: NAKAMA_ENDPOINT
+            value: "nakama.default"
+          - name: NAKAMA_PORT
+            value: "7350"
         ports:
         - containerPort: 5000
         command: ["npm", "run", "dev"]
@@ -29,6 +34,6 @@ spec:
   type: LoadBalancer
   ports:
     - protocol: TCP
-      name: 8501-port
+      name: 5000-port
       port: 5000
       targetPort: 5000
