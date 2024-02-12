@@ -1,0 +1,20 @@
+apiVersion: agones.dev/v1
+kind: GameServer
+metadata:
+  name: xoxo-gameserver
+spec:
+  ports:
+    - name: xoxo-port
+      containerPort: 5000
+      protocol: "TCP"
+  template:
+    spec:
+      containers:
+        - name: xoxo-container
+          image: muhanedfrostlinegames/xoxo:v1
+          env:
+            - name: NAKAMA_ENDPOINT
+              value: "nakama.default"
+            - name: NAKAMA_PORT
+              value: "7350"
+          command: ["npm", "run", "dev"]
